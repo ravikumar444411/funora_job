@@ -1,0 +1,39 @@
+{
+  "name": "node-app",
+  "version": "1.0.0",
+  "description": "A basic Node.js app with Express",
+  "main": "src/server.js",
+  "scripts": {
+    "start:dev": "cross-env NODE_ENV=development node src/server.js",
+    "start:staging": "cross-env NODE_ENV=staging node src/server.js",
+    "start:prod": "cross-env NODE_ENV=production node src/server.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
+    "bullmq": "^5.45.2",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2",
+    "firebase": "^11.4.0",
+    "firebase-admin": "^13.1.0",
+    "ioredis": "^5.6.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongodb": "^6.14.0",
+    "mongoose": "^8.11.0",
+    "multer": "^1.4.5-lts.1",
+    "multer-s3": "^3.0.1",
+    "node-cron": "^3.0.3",
+    "node-jose": "^2.2.0",
+    "sharp": "^0.34.3",
+    "twilio": "^5.5.2"
+  },
+  "devDependencies": {
+    "cross-env": "^10.0.0",
+    "nodemon": "^2.0.22"
+  },
+  "author": "Ravi",
+  "license": "MIT"
+}
