@@ -24,8 +24,8 @@ exports.createReminderQueue = async (req, res) => {
 
         const now = Date.now();
         const fourHoursBefore = eventStartTime - 4 * 60 * 60 * 1000;
-        // let delay = fourHoursBefore - now;
-        let delay = 2 * 60 * 1000; // 2
+        let delay = fourHoursBefore - now;
+        // let delay = 2 * 60 * 1000; // 2 min for testing only
 
         if (delay < 0) {
             return res.status(400).json({ message: "Event already started or less than 4 hours left" });
