@@ -1,7 +1,7 @@
 module.exports = {
     apps: [
         {
-            name: "funora-prod",
+            name: "funora-job-prod",
             script: "src/server.js",
             env: {
                 NODE_ENV: "production",
@@ -9,7 +9,7 @@ module.exports = {
             }
         },
         {
-            name: "funora-staging",
+            name: "funora-job-staging",
             script: "src/server.js",
             env: {
                 NODE_ENV: "staging",
