@@ -6,7 +6,10 @@
   "scripts": {
     "start:dev": "cross-env NODE_ENV=development node src/server.js",
     "start:staging": "cross-env NODE_ENV=staging node src/server.js",
-    "start:prod": "cross-env NODE_ENV=production node src/server.js"
+    "start:prod": "cross-env NODE_ENV=production node src/server.js",
+    "start:worker:dev": "cross-env NODE_ENV=development node src/queue/worker.js",
+    "start:worker:staging": "cross-env NODE_ENV=staging node src/queue/worker.js",
+    "start:worker:prod": "cross-env NODE_ENV=production node src/queue/worker.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
