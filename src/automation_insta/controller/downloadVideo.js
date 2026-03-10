@@ -6,7 +6,6 @@ async function downloadVideo(url, output = "input/video.mp4") {
 
   await fs.ensureDir("input");
 
-  // remove tracking params like ?si=
   const cleanUrl = url.split("?")[0];
 
   const cookiesPath = path.join(
@@ -16,11 +15,11 @@ async function downloadVideo(url, output = "input/video.mp4") {
 
   await youtubedl(cleanUrl, {
     output: output,
-    format: "bv*+ba/b",
+    format: "bv*[height<=1080]+ba/b[height<=1080]",
     cookies: cookiesPath,
-    "sleep-interval": 2,
-    "max-sleep-interval": 5,
-    "js-runtimes": "node"
+    extractorArgs: "youtube:player_client=android",
+    sleepInterval: 2,
+    maxSleepInterval: 5
   });
 
   return output;
