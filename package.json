@@ -33,7 +33,11 @@
     "node-cron": "^3.0.3",
     "node-jose": "^2.2.0",
     "sharp": "^0.34.3",
-    "twilio": "^5.5.2"
+    "twilio": "^5.5.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "fs-extra": "^11.2.0",
+    "instagram-private-api": "^1.46.0",
+    "yt-dlp-exec": "^1.0.2"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
