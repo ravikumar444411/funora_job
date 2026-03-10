@@ -5,7 +5,8 @@ module.exports = {
             script: "src/server.js",
             env: {
                 NODE_ENV: "production",
-                ENV_FILE: ".env.production"
+                ENV_FILE: ".env.production",
+                PORT: 3000
             }
         },
         {
@@ -13,7 +14,8 @@ module.exports = {
             script: "src/server.js",
             env: {
                 NODE_ENV: "staging",
-                ENV_FILE: ".env.staging"
+                ENV_FILE: ".env.staging",
+                 PORT: 3001
             }
         }
     ]
