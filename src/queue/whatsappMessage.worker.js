@@ -38,7 +38,11 @@ const whatsappMessageWorker = new Worker(
       phone,
       message,
       messageVariants = [],
-      recipientName = ""
+      recipientName = "",
+      templateName,
+      templateLanguageCode,
+      templateBodyParameters = [],
+      templateLink
     } = job.data;
 
     if (!isWithinSendWindow()) {
@@ -64,7 +68,11 @@ const whatsappMessageWorker = new Worker(
         phone,
         message,
         variants: messageVariants,
-        recipientName
+        recipientName,
+        templateName,
+        templateLanguageCode,
+        templateBodyParameters,
+        templateLink
       });
 
       if (messageLogId) {
@@ -73,6 +81,8 @@ const whatsappMessageWorker = new Worker(
           metadata: {
             provider: "whatsapp-cloud-api",
             senderPhoneNumberId: response.phoneNumberId,
+            messageType: response.messageType,
+            templateName: response.templateName,
             priority: job.opts.priority || 3
           }
         });

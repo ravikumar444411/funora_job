@@ -17,6 +17,21 @@ const whatsappAccountSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    defaultTemplateName: {
+      type: String,
+      default: null,
+      trim: true
+    },
+    defaultTemplateLanguageCode: {
+      type: String,
+      default: "en",
+      trim: true
+    },
+    defaultTemplateLink: {
+      type: String,
+      default: "https://funora.co.in/",
+      trim: true
+    },
     status: {
       type: String,
       enum: ["active", "paused", "blocked"],

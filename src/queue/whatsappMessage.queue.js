@@ -20,11 +20,25 @@ const addWhatsappMessageJob = async ({
   messageLogId,
   priority = 3,
   recipientName,
-  messageVariants = []
+  messageVariants = [],
+  templateName,
+  templateLanguageCode,
+  templateBodyParameters = [],
+  templateLink
 }) => {
   return whatsappMessageQueue.add(
     "sendWhatsappMessage",
-    { phone, message, messageLogId, recipientName, messageVariants },
+    {
+      phone,
+      message,
+      messageLogId,
+      recipientName,
+      messageVariants,
+      templateName,
+      templateLanguageCode,
+      templateBodyParameters,
+      templateLink
+    },
     { priority }
   );
 };

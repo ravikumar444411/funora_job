@@ -1,17 +1,16 @@
-const Contact = require("../../src/models/contact.model");
+const Contact = require("../models/contact.model");
+const { whatsappMessageQueue } = require("../queue/whatsappMessage.queue");
+const {queueDailyWhatsappTemplateJobs} = require("../jobs/whatsappDailyCron.job")
 
-
-// Push message to queue
 exports.sendBulkMessage = async (req, res) => {
   try {
-    const { message, ownerType } = req.body;
-
-    if (!message || typeof message !== "string" || !message.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Valid message is required"
-      });
-    }
+    const {
+      ownerType,
+      message,
+      templateName = process.env.WHATSAPP_DEFAULT_TEMPLATE_NAME || "welcome_to_funora_new",
+      templateLanguageCode = process.env.WHATSAPP_DEFAULT_TEMPLATE_LANGUAGE || "en",
+      templateLink = process.env.FUNORA_DEFAULT_LINK || "https://funora.co.in/"
+    } = req.body;
 
     if (!ownerType || !["User", "Organizer"].includes(ownerType)) {
       return res.status(400).json({
@@ -20,7 +19,7 @@ exports.sendBulkMessage = async (req, res) => {
       });
     }
 
-    const contacts = await Contact.find({ ownerType });
+    const contacts = await Contact.find({ ownerType }).select("name phone ownerType");
 
     if (!contacts.length) {
       return res.status(404).json({
@@ -29,34 +28,45 @@ exports.sendBulkMessage = async (req, res) => {
       });
     }
 
-    const jobs = [];
-
-    for (const contact of contacts) {
-      jobs.push({
-        contactId: contact._id,
+    const jobs = contacts.map((contact) => ({
+      name: "sendWhatsappMessage",
+      data: {
         phone: contact.phone,
-        message
-      });
-    }
+        message,
+        recipientName: contact.name,
+        templateName,
+        templateLanguageCode,
+        templateBodyParameters: [contact.name, templateLink],
+        templateLink
+      },
+      opts: { priority: 3 }
+    }));
 
-    // Lazy-load queue so Redis is only required when this API is used.
-    const whatsAppQueue = require("../process/whatsAppQueue");
+    await whatsappMessageQueue.addBulk(jobs);
 
-    // push bulk jobs to queue
-    await whatsAppQueue.addBulk(
-      jobs.map(job => ({
-        name: "sendWhatsappMessage",
-        data: job
-      }))
-    );
-
-    res.json({
+    return res.json({
       success: true,
       message: "Messages queued successfully",
-      totalJobs: jobs.length
+      totalJobs: jobs.length,
+      mode: templateName ? "template" : "text",
+      templateName: templateName || null
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+
+exports.testApi =  async (req, res) => {
+  try {
+  const result = await queueDailyWhatsappTemplateJobs();
+  console.log("reslt");
+  res.send(result)
+  } catch (error) {
+    return res.status(500).json({
       success: false,
       message: error.message
     });
