@@ -8,19 +8,6 @@ const contactSchema = new mongoose.Schema(
     required: true
   },
 
-  // if this contact is a registered platform user
-  platformUserId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null
-  },
-
-  platformOrganizerId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Organizers",
-    default: null
-  },
-
   name: {
     type: String,
     required: true
@@ -33,6 +20,11 @@ const contactSchema = new mongoose.Schema(
 
   email: {
     type: String
+  },
+
+  optedIn: {
+    type: Boolean,
+    default: true
   },
 
 },
