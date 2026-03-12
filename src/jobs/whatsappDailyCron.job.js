@@ -76,19 +76,44 @@ const getDailyWindow = (now = new Date()) => {
 
 const getDelayForContact = (contactKey, now = new Date()) => {
   const { windowStart, windowEnd } = getDailyWindow(now);
+
+  // If current time is before sending window, messages will start from windowStart
   const base = now < windowStart ? windowStart : now;
 
+  // If current time already passed windowEnd, schedule for next day's windowStart
   if (base >= windowEnd) {
+    // Delay = time remaining until next day's sending window
     return Math.max(1000, windowStart.getTime() - now.getTime());
   }
 
+  // Default spread = entire window duration
+  // Example:
+  // windowStart = 9 AM
+  // windowEnd = 9 PM
+  // defaultSpreadMs = 12 hours
   const defaultSpreadMs = Math.max(1000, windowEnd.getTime() - windowStart.getTime());
+
+  // If SPREAD_MINUTES is set in env, override spread window
+  // Example: SPREAD_MINUTES=120 → messages distributed in 2 hours
   const spreadMs = SPREAD_MINUTES > 0 ? SPREAD_MINUTES * 60 * 1000 : defaultSpreadMs;
+
+  // Spread end = base + spread window
   const spreadEnd = new Date(base.getTime() + spreadMs);
+
+  // Ensure spread does not exceed allowed windowEnd
   const effectiveEnd = spreadEnd < windowEnd ? spreadEnd : windowEnd;
+
+  // Final spread duration
   const effectiveSpreadMs = Math.max(1000, effectiveEnd.getTime() - base.getTime());
 
+  // Deterministic offset using contact hash
+  // This ensures:
+  // - contacts always get roughly same send time daily
+  // - avoids spike
   const offsetMs = hashString(contactKey) % effectiveSpreadMs;
+
+  // Final delay calculation
+  // Delay = base time + offset - current time
   return Math.max(0, base.getTime() + offsetMs - now.getTime());
 };
 
@@ -126,8 +151,14 @@ const queueDailyWhatsappTemplateJobs = async () => {
         templateBodyParameters: [contact.name, templateLink],
         templateLink
       },
-      opts: {
+     opts: {
         priority: PRIORITY,
+
+        // Delay before sending the WhatsApp message
+        // Example scenarios:
+        // If window = 9AM–9PM (12 hours)
+        // and 1000 contacts exist:
+        // each message will be randomly distributed within that window
         delay: getDelayForContact(contactKey, now)
       }
     };
